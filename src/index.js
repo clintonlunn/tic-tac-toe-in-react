@@ -11,11 +11,37 @@ function Square(props) {
 }
 
 class Board extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      squares: Array(9).fill(null),
+      xIsNext: true
+    };
+  }
+
+  handleClick(i) {
+    console.log("in the handle click");
+
+    const squares = this.state.squares.slice();
+    console.log(squares);
+
+    if (calculateWinner(squares) || squares[i]) {
+      return;
+    }
+    (squares[i] = this.state.xIsNext) === true
+      ? (squares[i] = "X")
+      : (squares[i] = "O");
+    this.setState({
+      squares: squares,
+      xIsNext: !this.state.xIsNext
+    });
+  }
+
   renderSquare(i) {
     return (
       <Square
-        value={this.props.squares[i]}
-        onClick={() => this.props.onClick(i)}
+        value={this.state.squares[i]}
+        onClick={() => this.handleClick(i)}
       />
     );
   }
@@ -53,47 +79,8 @@ class Board extends React.Component {
 }
 
 class Game extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      history: [
-        {
-          squares: Array(9).fill(null)
-        }
-      ],
-      xIsNext: true
-    };
-  }
-
-  handleClick(i) {
-    const history = this.state.history;
-    const current = history[history.length - 1];
-    const squares = current.squares.slice();
-    console.log(squares);
-
-    if (calculateWinner(squares) || squares[i]) {
-      return;
-    }
-    (squares[i] = this.state.xIsNext) === true
-      ? (squares[i] = "X")
-      : (squares[i] = "O");
-    this.setState({
-      history: history.concat([
-        {
-          squares: squares
-        }
-      ]),
-      xIsNext: !this.state.xIsNext
-    });
-  }
-
   render() {
-    console.log({ state: this.state });
-    const history = this.state.history;
-    const current = history[history.length - 1];
-    console.log({ current });
-
-    const winner = calculateWinner(current.squares);
+    console.log(this.state);
     return (
       <div className="game">
         <div className="game-board">

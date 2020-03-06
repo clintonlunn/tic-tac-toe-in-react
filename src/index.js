@@ -51,6 +51,7 @@ class Game extends React.Component {
       history: [{
         squares: Array(9).fill(null),
       }],
+      step: 0,
       xIsNext: true,
     };
   }
@@ -60,7 +61,7 @@ class Game extends React.Component {
     const history = this.state.history;
     const current = history[history.length -1];
     const squares = current.squares.slice();
-    
+
     console.log(squares);
 
     if (calculateWinner(squares) || squares[i]) {
@@ -77,10 +78,29 @@ class Game extends React.Component {
     });
   }
 
+  jumpTo(step) {
+    this.setState({
+      stepNumber: step,
+      xIsNext: (step % 2) === 0 // since 'O' is going to be an even move, then this would evaluate to true
+    })
+  }
+
   render() {
     const history = this.state.history;
     const current = history[history.length-1];
     const winner = calculateWinner(current.squares);
+
+    const moves = history.map((step, move) => {
+      const desc = move ? 
+      'Go to move # ' + move :
+      'Jump to start';
+
+      return (
+        <li key={move}>
+          <button onClick={() => this.jumpTo(move)}>{desc}</button>
+        </li>
+      )
+    })
 
     let status;
     if (winner) {
@@ -99,7 +119,7 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <ol>{/* TODO */}</ol>
+          <ol>{moves}</ol>
         </div>
       </div>
     );
